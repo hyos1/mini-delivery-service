@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers(POST,"/api/orders").hasRole(CUSTOMER)
                         .requestMatchers(PATCH,"/api/orders").hasRole(CUSTOMER)
                         .requestMatchers(PATCH,"/api/orders/*/cancel").hasRole(CUSTOMER)
+                        .requestMatchers(POST,"/api/orders/*/payments").hasRole(CUSTOMER)
                         .requestMatchers(PATCH,"/api/orders/*/accept", "/api/orders/*/complete").hasRole(OWNER)
                         .anyRequest().authenticated()
                 )       // 나머지는 인증된 사람만

@@ -3,6 +3,8 @@ package com.myapp.delivery.domain.order.controller;
 import com.myapp.delivery.domain.order.dto.request.CreateOrderRequest;
 import com.myapp.delivery.domain.order.dto.response.OrderResponse;
 import com.myapp.delivery.domain.order.service.OrderService;
+import com.myapp.delivery.domain.payment.dto.response.PaymentResponse;
+import com.myapp.delivery.domain.payment.enums.PayMethod;
 import com.myapp.delivery.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -69,4 +71,14 @@ public class OrderController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    // 주문 결제!
+    @PostMapping("/{id}/payments")
+    public ResponseEntity<ApiResponse<PaymentResponse>> createPayment(
+            @AuthenticationPrincipal Long loginUserId, @PathVariable Long id,
+            @RequestBody PayMethod payMethod
+            ) {
+        PaymentResponse response = orderService.payment(loginUserId, id, payMethod);
+        ApiResponse<PaymentResponse> apiResponse = ApiResponse.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    }
 }

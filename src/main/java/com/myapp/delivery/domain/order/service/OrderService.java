@@ -6,6 +6,10 @@ import com.myapp.delivery.domain.order.dto.response.OrderResponse;
 import com.myapp.delivery.domain.order.entity.Address;
 import com.myapp.delivery.domain.order.entity.Order;
 import com.myapp.delivery.domain.order.repository.OrderRepository;
+import com.myapp.delivery.domain.payment.dto.response.PaymentResponse;
+import com.myapp.delivery.domain.payment.entity.Payment;
+import com.myapp.delivery.domain.payment.enums.PayMethod;
+import com.myapp.delivery.domain.payment.repository.PaymentRepository;
 import com.myapp.delivery.domain.user.entity.User;
 import com.myapp.delivery.domain.user.enums.UserRole;
 import com.myapp.delivery.domain.user.repository.UserRepository;
@@ -26,6 +30,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
+    private final PaymentRepository paymentRepository;
 
     @Transactional
     public OrderResponse createOrder(Long userId, Long menuId, int quantity, Address address) {
@@ -126,4 +131,23 @@ public class OrderService {
         return OrderResponse.from(order);
     }
 
+    @Transactional
+    public PaymentResponse payment(Long loginUserId, Long orderId, PayMethod payMethod) {
+        if (!userRepository.existsById(loginUserId)) {
+            throw new ClientException(ErrorCode.USER_NOT_FOUND);
+        }
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                () -> new ClientException(ErrorCode.ORDER_NOT_FOUND)
+        );
+
+        // 본인 주문만 결제 가능
+        if (!order.getUser().getId().equals(loginUserId)) {
+            throw new ClientException(ErrorCode.INVALID_PAYMENT_ACCESS);
+        }
+        // 결제수단 CARD만 가능, "주문요청"일때만 가능
+        Payment payment = Payment.create(order, payMethod);
+        paymentRepository.save(payment);
+
+        return PaymentResponse.from(payment);
+    }
 }

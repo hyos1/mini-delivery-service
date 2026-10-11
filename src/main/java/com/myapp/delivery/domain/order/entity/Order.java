@@ -64,6 +64,15 @@ public class Order extends BaseEntity {
         return new Order(quantity, address, user, menu);
     }
 
+    // 결제 완료 시 [주문요청 -> 결제완료]로 변경
+    public void pay() {
+        // "주문요청" 상태인 경우에만 "결제완료"로 변경 가능
+        if (this.orderState != OrderState.ORDERED) {
+            throw new ClientException(ErrorCode.INVALID_ORDER_STATE_FOR_PAY);
+        }
+        this.orderState = OrderState.PAID;
+    }
+
     // 결제한 후 [결제완료 -> 주문 수락]으로 변경
     public void accept() {
         // "결제완료" 상태인 주문만 "주문수락" 가능

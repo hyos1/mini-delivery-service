@@ -24,13 +24,17 @@ public enum ErrorCode {
     INVALID_ORDER_STATE_FOR_ACCEPT(HttpStatus.BAD_REQUEST, "결제가 완료된 주문만 수락할 수 있습니다."),
     INVALID_ORDER_STATE_FOR_CANCEL(HttpStatus.BAD_REQUEST, "주문 요청 상태일 때만 취소할 수 있습니다."),
     INVALID_ORDER_STATE_FOR_DELIVERY_COMPLETE(HttpStatus.BAD_REQUEST, "주문 수락 상태일 때만 배달 완료로 변경할 수 있습니다."),
+    INVALID_ORDER_STATE_FOR_PAY(HttpStatus.BAD_REQUEST, "주문 요청 상태일 때만 결제할 수 있습니다."),
     // 주문 엔티티 자체 검증용
     INVALID_ORDER_QUANTITY(HttpStatus.BAD_REQUEST, "주문 수량은 1개 이상이어야 합니다."),
     ADDRESS_REQUIRED(HttpStatus.BAD_REQUEST, "배송 주소는 필수 입력 항목입니다."),
 
     // 결제
+    INVALID_PAYMENT_ACCESS(HttpStatus.FORBIDDEN, "본인의 주문만 결제할 수 있습니다."),
 
 
+    // 결제 엔티티 자체 검증용,
+    ONLY_CARD_ACCEPTED(HttpStatus.BAD_REQUEST, "결제 수단은 카드만 가능합니다."),
 
     // 처리하지 못한 예외
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다."),
