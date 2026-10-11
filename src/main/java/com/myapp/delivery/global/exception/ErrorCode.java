@@ -13,7 +13,7 @@ public enum ErrorCode {
 
     // 메뉴
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 메뉴입니다."),
-    NOT_MENU_OWNER(HttpStatus.FORBIDDEN, "본인의 메뉴만 수정/삭제할 수 있습니다."),
+    INVALID_MENU_ACCESS(HttpStatus.FORBIDDEN, "본인의 메뉴만 수정/삭제할 수 있습니다."),
     // 메뉴 엔티티 자체 검증용
     INVALID_MENU_NAME(HttpStatus.BAD_REQUEST, "올바르지 않은 메뉴 이름입니다."),
     INVALID_MENU_PRICE(HttpStatus.BAD_REQUEST, "메뉴 가격은 1원 이상이어야 합니다."),

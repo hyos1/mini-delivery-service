@@ -38,7 +38,7 @@ public class MenuService {
     // 메뉴 목록 조회
     public List<MenuResponse> findAll() {
         List<MenuResponse> menuResponses = new ArrayList<>();
-        List<Menu> menus = menuRepository.findAll();
+        List<Menu> menus = menuRepository.findAllByIsDeletedFalse();
         for (Menu menu : menus) {
             menuResponses.add(MenuResponse.from(menu));
         }
@@ -48,7 +48,7 @@ public class MenuService {
 
     // 메뉴 단건 조회
     public MenuResponse findById(Long menuId) {
-        Menu menu = menuRepository.findById(menuId).orElseThrow(
+        Menu menu = menuRepository.findByIdAndIsDeletedFalse(menuId).orElseThrow(
                 () -> new ClientException(ErrorCode.MENU_NOT_FOUND)
         );
         return MenuResponse.from(menu);
@@ -57,11 +57,11 @@ public class MenuService {
     // 메뉴 수정
     @Transactional
     public MenuResponse update(Long loginUserId, Long id, String name, int price, String description) {
-        Menu menu = menuRepository.findById(id).orElseThrow(
+        Menu menu = menuRepository.findByIdAndIsDeletedFalse(id).orElseThrow(
                 () -> new ClientException(ErrorCode.MENU_NOT_FOUND)
         );
         if (!menu.getUser().getId().equals(loginUserId)) {
-            throw new ClientException(ErrorCode.NOT_MENU_OWNER);
+            throw new ClientException(ErrorCode.INVALID_MENU_ACCESS);
         }
         menu.update(name, price, description);
         // 수정된 시간이 반영되지 않으므로 직접 flush()를 날려 DB에 반영
@@ -74,13 +74,13 @@ public class MenuService {
     // 메뉴 삭제
     @Transactional
     public void deleteById(Long loginUserId, Long id) {
-        Menu menu = menuRepository.findById(id).orElseThrow(
+        Menu menu = menuRepository.findByIdAndIsDeletedFalse(id).orElseThrow(
                 () -> new ClientException(ErrorCode.MENU_NOT_FOUND)
         );
 
         // 본인 메뉴만 삭제 가능
         if (!menu.getUser().getId().equals(loginUserId)) {
-            throw new ClientException(ErrorCode.NOT_MENU_OWNER);
+            throw new ClientException(ErrorCode.INVALID_MENU_ACCESS);
         }
 
         // delete(menu) 실행 시 Menu 엔티티 @SQLDelete에 적힌 쿼리 실행

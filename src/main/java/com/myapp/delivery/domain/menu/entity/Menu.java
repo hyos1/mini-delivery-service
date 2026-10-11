@@ -14,7 +14,8 @@ import org.hibernate.annotations.SQLRestriction;
 // delete() 호출 시 실행될 UPDATE 쿼리
 @SQLDelete(sql = "UPDATE menu SET is_deleted = true WHERE menu.menu_id = ?")
 // 조회(select)할 때마다 is_deleted = false가 자동으로 붙어서 삭제된 데이터가 나오지 않는다.
-@SQLRestriction("is_deleted = false")
+// 주문 목록 조회 시 삭제처리된 메뉴는 나오지 않으므로 직접 쿼리에 is_deleted=false붙이게 변경
+//@SQLRestriction("is_deleted = false")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
