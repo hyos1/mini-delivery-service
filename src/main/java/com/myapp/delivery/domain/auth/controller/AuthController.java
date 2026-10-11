@@ -5,6 +5,7 @@ import com.myapp.delivery.domain.auth.dto.request.SignupRequest;
 import com.myapp.delivery.domain.auth.dto.response.LoginResponse;
 import com.myapp.delivery.domain.auth.service.AuthService;
 import com.myapp.delivery.domain.user.dto.response.UserResponse;
+import com.myapp.delivery.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,16 +26,18 @@ public class AuthController {
 
     // 회원가입 성공 시 201
     @PostMapping("/signup")
-    public ResponseEntity<UserResponse> signup(@Valid @RequestBody SignupRequest request) {
+    public ResponseEntity<ApiResponse<UserResponse>> signup(@Valid @RequestBody SignupRequest request) {
         UserResponse userResponse = userService.signup(request.getUsername(), request.getPassword(), request.getRole());
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
+        ApiResponse<UserResponse> apiResponse = ApiResponse.ok(userResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
     // 로그인 - Body에 jwt 반환
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = userService.login(request.getUsername(), request.getPassword());
         log.info("response: {}", response.getJwt());
-        return ResponseEntity.ok(response);
+        ApiResponse<LoginResponse> apiResponse = ApiResponse.ok(response);
+        return ResponseEntity.ok(apiResponse);
     }
 }

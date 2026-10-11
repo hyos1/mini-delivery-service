@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)  // 기본 인증 팝업 끔
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // 세션 안 씀
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/signup", "/api/auth/login").permitAll()  // 이 둘은 토큰 없이 통과
+                        .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/users").permitAll()  // 이 둘은 토큰 없이 통과
                         .requestMatchers(GET, "/api/menus", "/api/menus/*").permitAll()
                         .requestMatchers(POST,"/api/menus").hasRole("OWNER")
                         .anyRequest().authenticated()
