@@ -1,5 +1,6 @@
 package com.myapp.delivery.global.config;
 
+import com.myapp.delivery.domain.user.enums.UserRole;
 import com.myapp.delivery.global.security.JwtAuthenticationFilter;
 import com.myapp.delivery.global.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import tools.jackson.databind.ObjectMapper;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
@@ -25,6 +25,9 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final ObjectMapper objectMapper;
+
+    private static final String CUSTOMER = UserRole.CUSTOMER.name();
+    private static final String OWNER = UserRole.OWNER.name();
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -36,7 +39,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/users").permitAll()  // 이 둘은 토큰 없이 통과
                         .requestMatchers(GET, "/api/menus", "/api/menus/*").permitAll()
-                        .requestMatchers(POST,"/api/menus").hasRole("OWNER")
+                        .requestMatchers(POST,"/api/menus").hasRole(OWNER)
+                        .requestMatchers(POST,"/api/orders").hasRole(CUSTOMER)
+                        .requestMatchers(PATCH,"/api/orders").hasRole(CUSTOMER)
+                        .requestMatchers(PATCH,"/api/orders/*/cancel").hasRole(CUSTOMER)
+                        .requestMatchers(PATCH,"/api/orders/*/accept", "/api/orders/*/complete").hasRole(OWNER)
                         .anyRequest().authenticated()
                 )       // 나머지는 인증된 사람만
                 .addFilterBefore(new JwtAuthenticationFilter(objectMapper, jwtUtil),

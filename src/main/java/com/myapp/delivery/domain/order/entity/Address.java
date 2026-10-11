@@ -15,6 +15,7 @@ public class Address {
     private String city;
     @Column(nullable = false)
     private String street;
+    @Column(nullable = false)
     private String zipCode;
 
     private Address(String city, String street, String zipCode) {

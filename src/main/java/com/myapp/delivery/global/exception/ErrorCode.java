@@ -19,12 +19,21 @@ public enum ErrorCode {
     INVALID_MENU_PRICE(HttpStatus.BAD_REQUEST, "메뉴 가격은 1원 이상이어야 합니다."),
 
     // 주문
+    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 주문입니다."),
+    INVALID_ORDER_ACCESS(HttpStatus.FORBIDDEN, "본인의 주문만 수정/취소할 수 있습니다."),
+    INVALID_ORDER_STATE_FOR_ACCEPT(HttpStatus.BAD_REQUEST, "결제가 완료된 주문만 수락할 수 있습니다."),
+    INVALID_ORDER_STATE_FOR_CANCEL(HttpStatus.BAD_REQUEST, "주문 요청 상태일 때만 취소할 수 있습니다."),
+    INVALID_ORDER_STATE_FOR_DELIVERY_COMPLETE(HttpStatus.BAD_REQUEST, "주문 수락 상태일 때만 배달 완료로 변경할 수 있습니다."),
     // 주문 엔티티 자체 검증용
     INVALID_ORDER_QUANTITY(HttpStatus.BAD_REQUEST, "주문 수량은 1개 이상이어야 합니다."),
+    ADDRESS_REQUIRED(HttpStatus.BAD_REQUEST, "배송 주소는 필수 입력 항목입니다."),
 
     // 결제
 
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"서버 오류가 발생했습니다.")
+
+
+    // 처리하지 못한 예외
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다."),
     ;
 
     private final HttpStatus statusCode;
