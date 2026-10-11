@@ -7,6 +7,7 @@ import com.myapp.delivery.global.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -50,6 +51,16 @@ public class GlobalExceptionHandler {
         ApiResponse<Map<String, String>> apiResponse = ApiResponse.fail("입력값 검증에 실패했습니다.", errors);
         return ResponseEntity.status(e.getStatusCode()).body(apiResponse);
     }
+
+    // 요청 본문을 읽을 수 없는 경우 - JSON 문법 오류, 타입 불일치("quantity": "abc"), 본문 누락 등
+    @ExceptionHandler
+    public ResponseEntity<ApiResponse<Void>> httpMessageNotReadableExHandler(HttpMessageNotReadableException e) {
+        log.info("HTTP 메세지 읽기 실패(JSON 파싱 에러) 발생 : {}", e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.fail("요청 본문의 형식이 올바르지 않습니다."));
+    }
+
     // todo 지원하지 않는 Http Method도 처리하기 - HttpRequestMethodNotSupportedException
 
     @ExceptionHandler
